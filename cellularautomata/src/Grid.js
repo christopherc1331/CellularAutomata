@@ -3,16 +3,20 @@ import styled from "styled-components";
 import produce from "immer";
 
 const Grid = () => {
-  const [running, setRunning] = useState(false);
-  const [numCols, setNumCols] = useState(50);
-  const [numRows, setNumRows] = useState(50);
-  const [grid, setGrid] = useState(() => {
+  const makeEmptyGrid = () => {
     const rows = [];
 
     for (let i = 0; i < numRows; i++) {
       rows.push(Array.from(Array(numCols), () => 0));
     }
     return rows;
+  };
+
+  const [running, setRunning] = useState(false);
+  const [numCols, setNumCols] = useState(50);
+  const [numRows, setNumRows] = useState(50);
+  const [grid, setGrid] = useState(() => {
+    return makeEmptyGrid();
   });
 
   const [operations, setOperations] = useState([
@@ -71,7 +75,22 @@ const Grid = () => {
           }
         }}
       >
-        {running ? "stop" : "start"}
+        {running ? "Stop" : "Start"}
+      </button>
+      <button onClick={() => setGrid(makeEmptyGrid())}>Clear</button>
+      <button
+        onClick={() => {
+          const rows = [];
+
+          for (let i = 0; i < numRows; i++) {
+            rows.push(
+              Array.from(Array(numCols), () => (Math.random() > 0.5 ? 1 : 0))
+            );
+          }
+          setGrid(rows);
+        }}
+      >
+        Random
       </button>
       <GridDiv numCols={numCols}>
         {grid.map((rows, i) =>
