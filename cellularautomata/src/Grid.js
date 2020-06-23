@@ -57,7 +57,7 @@ const Grid = () => {
       });
     });
 
-    setTimeout(runSimulator, 1000);
+    setTimeout(runSimulator, 100);
   }, []);
 
   return (
