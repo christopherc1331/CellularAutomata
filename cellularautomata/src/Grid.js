@@ -21,7 +21,6 @@ const Grid = () => {
   const [displayedEvols, setDisplayedEvols] = useState(
     Math.round((1000 / evols + Number.EPSILON) * 100) / 100
   );
-  const [inputValue, setInputValue] = useState(displayedEvols);
   const [editMode, setEditMode] = useState(false);
   const [grid, setGrid] = useState(() => {
     return makeEmptyGrid();
@@ -74,7 +73,7 @@ const Grid = () => {
 
   useEffect(() => {
     setEvols(Math.round(1000 / displayedEvols));
-  }, [inputValue]);
+  }, [displayedEvols]);
 
   return (
     <Container>
@@ -109,9 +108,8 @@ const Grid = () => {
         <RevolsContainer>
           {editMode ? (
             <input
-              value={inputValue}
+              value={displayedEvols}
               onChange={(e) => {
-                setInputValue(e.target.value);
                 setDisplayedEvols(e.target.value);
               }}
             />
@@ -137,7 +135,12 @@ const Grid = () => {
               key={`${i}-${m}`}
               onClick={() => {
                 let newGrid = produce(grid, (gridCopy) => {
-                  gridCopy[i][m] = grid[i][m] ? 0 : 1;
+                  // console.log("editMode | ", editMode);
+                  if (running) {
+                    return;
+                  } else {
+                    gridCopy[i][m] = grid[i][m] ? 0 : 1;
+                  }
                 });
                 setGrid(newGrid);
               }}
@@ -177,6 +180,7 @@ const ButtonContainer = styled.div`
 `;
 
 const Container = styled.div`
+  background-color: #fcf8eb;
   display: flex;
   flex-direction: column;
   align-items: center;
