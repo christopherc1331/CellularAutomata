@@ -21,6 +21,7 @@ const Grid = () => {
   const [displayedEvols, setDisplayedEvols] = useState(
     Math.round((1000 / evols + Number.EPSILON) * 100) / 100
   );
+  const [evolCount, setEvolCount] = useState(0);
   const [editMode, setEditMode] = useState(false);
   const [grid, setGrid] = useState(() => {
     return makeEmptyGrid();
@@ -45,7 +46,6 @@ const Grid = () => {
     if (!runningRef.current) {
       return;
     }
-
     setGrid((g) => {
       return produce(g, (gridCopy) => {
         for (let i = 0; i < numRows; i++) {
@@ -75,10 +75,34 @@ const Grid = () => {
     setEvols(Math.round(1000 / displayedEvols));
   }, [displayedEvols]);
 
+  useEffect(() => {
+    setEvolCount(evolCount + 1);
+  }, [grid]);
+
   return (
     <Container>
       <h1>Conway's Game of Life: Cellular Automata</h1>
-      <ButtonContainer>
+      <TopRowContainer>
+        <RateEditContainer>
+          {editMode ? (
+            <input
+              value={displayedEvols}
+              onChange={(e) => {
+                setDisplayedEvols(e.target.value);
+              }}
+            />
+          ) : (
+            <BoldText>{`Speed: ${displayedEvols} evolution${
+              displayedEvols != 1 ? "s" : ""
+            }/sec`}</BoldText>
+          )}
+          <FontAwesomeIcon
+            onClick={() => {
+              setEditMode(!editMode);
+            }}
+            icon={faEdit}
+          />
+        </RateEditContainer>
         <button
           onClick={() => {
             setRunning(!running);
@@ -105,29 +129,8 @@ const Grid = () => {
         >
           Random
         </button>
-        <RevolsContainer>
-          {editMode ? (
-            <input
-              value={displayedEvols}
-              onChange={(e) => {
-                setDisplayedEvols(e.target.value);
-              }}
-            />
-          ) : (
-            <p
-              style={{ fontWeight: "bold" }}
-            >{`Speed: ${displayedEvols} evolution${
-              displayedEvols != 1 ? "s" : ""
-            }/sec`}</p>
-          )}
-          <FontAwesomeIcon
-            onClick={() => {
-              setEditMode(!editMode);
-            }}
-            icon={faEdit}
-          />
-        </RevolsContainer>
-      </ButtonContainer>
+        <BoldText>{`Total Evolutions: ${evolCount.toLocaleString()}`}</BoldText>
+      </TopRowContainer>
       <GridDiv numCols={numCols}>
         {grid.map((rows, i) =>
           rows.map((col, m) => (
@@ -168,7 +171,7 @@ const GridDiv = styled.div`
   grid-template-columns: ${(props) => `repeat(${props.numCols},20px)`};
 `;
 
-const ButtonContainer = styled.div`
+const TopRowContainer = styled.div`
   width: 60%;
   height: 40px;
   display: flex;
@@ -186,9 +189,13 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const RevolsContainer = styled.div`
+const RateEditContainer = styled.div`
   width: 300px;
   display: flex;
   justify-content: space-around;
   align-items: center;
+`;
+
+const BoldText = styled.p`
+  font-weight: bold;
 `;
