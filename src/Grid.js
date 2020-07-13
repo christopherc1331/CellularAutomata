@@ -3,6 +3,7 @@ import styled from "styled-components";
 import produce from "immer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { Button, List, Typography, Divider } from "antd";
 
 const Grid = () => {
   const makeEmptyGrid = () => {
@@ -14,6 +15,11 @@ const Grid = () => {
     return rows;
   };
 
+  const data = [
+    `Any live cell with two or three live neighbours survives.`,
+    `Any dead cell with three live neighbours becomes a live cell.`,
+    `All other live cells die in the next generation. Similarly, all other dead cells stay dead.`,
+  ];
   const [running, setRunning] = useState(false);
   const [numCols, setNumCols] = useState(50);
   const [numRows, setNumRows] = useState(50);
@@ -76,12 +82,19 @@ const Grid = () => {
   }, [displayedEvols]);
 
   useEffect(() => {
-    setEvolCount(evolCount + 1);
+    running && setEvolCount(evolCount + 1);
   }, [grid]);
 
   return (
     <Container>
       <h1>Conway's Game of Life: Cellular Automata</h1>
+      <Divider orientation="center">Rules</Divider>
+      <List
+        size="small"
+        bordered
+        dataSource={data}
+        renderItem={(item) => <List.Item>{item}</List.Item>}
+      />
       <TopRowContainer>
         <RateEditContainer>
           {editMode ? (
@@ -93,7 +106,7 @@ const Grid = () => {
             />
           ) : (
             <BoldText>{`Speed: ${displayedEvols} evolution${
-              displayedEvols != 1 ? "s" : ""
+              displayedEvols !== 1 ? "s" : ""
             }/sec`}</BoldText>
           )}
           <FontAwesomeIcon
@@ -103,7 +116,8 @@ const Grid = () => {
             icon={faEdit}
           />
         </RateEditContainer>
-        <button
+        <Button
+          type={"primary"}
           onClick={() => {
             setRunning(!running);
             if (!running) {
@@ -113,9 +127,18 @@ const Grid = () => {
           }}
         >
           {running ? "Stop" : "Start"}
-        </button>
-        <button onClick={() => setGrid(makeEmptyGrid())}>Clear</button>
-        <button
+        </Button>
+        <Button
+          type={"primary"}
+          onClick={() => {
+            setGrid(makeEmptyGrid());
+            setEvolCount(0);
+          }}
+        >
+          Clear
+        </Button>
+        <Button
+          type={"primary"}
           onClick={() => {
             const rows = [];
 
@@ -128,7 +151,7 @@ const Grid = () => {
           }}
         >
           Random
-        </button>
+        </Button>
         <BoldText>{`Total Evolutions: ${evolCount.toLocaleString()}`}</BoldText>
       </TopRowContainer>
       <GridDiv numCols={numCols}>
@@ -183,7 +206,7 @@ const TopRowContainer = styled.div`
 `;
 
 const Container = styled.div`
-  background-color: #fcf8eb;
+  background-color: #f0ffff;
   display: flex;
   flex-direction: column;
   align-items: center;
