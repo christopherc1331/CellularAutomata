@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import Grid from "./Grid.js";
+import "antd/dist/antd.css";
 
 function App() {
   return (
